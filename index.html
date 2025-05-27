@@ -3,34 +3,33 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Indian Monopoly ATM</title>
+  <title>Indian Monopoly ATM System</title>
   <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore-compat.js"></script>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
-
   <div class="max-w-4xl mx-auto p-4">
     <div class="flex justify-between items-center mb-4">
-      <h1 class="text-3xl font-bold">🏦 Indian Monopoly ATM</h1>
+      <h1 class="text-3xl font-bold text-center">🏦 Indian Monopoly ATM System</h1>
       <button onclick="toggleDarkMode()" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded">🌓</button>
     </div>
 
     <!-- Player Setup -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow mb-6">
-      <h2 class="text-xl font-semibold mb-2">Setup Players (2–6)</h2>
-      <div class="flex flex-wrap gap-2 mb-3">
-        <input id="playerName" placeholder="Name" class="p-2 border rounded w-40">
-        <input id="playerPin" placeholder="4-digit PIN" maxlength="4" class="p-2 border rounded w-32" type="password">
-        <button onclick="addPlayer()" class="bg-blue-600 text-white px-4 py-2 rounded">Add Player</button>
+    <div class="bg-white dark:bg-gray-800 shadow rounded p-4 mb-6">
+      <h2 class="text-xl font-semibold mb-2">🎮 Setup Players (2-6)</h2>
+      <div class="flex flex-wrap gap-2 mb-2">
+        <input type="text" id="playerName" placeholder="Player Name" class="p-2 border rounded w-40">
+        <input type="password" id="playerPin" placeholder="4-digit PIN" maxlength="4" class="p-2 border rounded w-32">
+        <button id="addPlayerBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Add Player</button>
       </div>
       <div id="playersList" class="grid grid-cols-2 gap-4"></div>
     </div>
 
     <!-- Banker Panel -->
-    <div class="bg-white dark:bg-gray-800 p-4 rounded shadow">
-      <h2 class="text-xl font-semibold mb-3">💰 Banker Panel</h2>
+    <div class="bg-white dark:bg-gray-800 shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-4">💰 Banker Controls</h2>
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
           <label>From:</label>
@@ -49,20 +48,20 @@
           <input type="password" id="fromPin" maxlength="4" class="w-full p-2 border rounded">
         </div>
         <div class="md:col-span-2">
-          <button onclick="transferMoney()" class="bg-green-600 text-white px-4 py-2 w-full rounded mt-2">Transfer</button>
+          <button id="transferBtn" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 w-full rounded">Transfer</button>
         </div>
       </div>
 
       <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label>Loan to:</label>
+          <label>Give ₹200 Loan to:</label>
           <select id="loanPlayer" class="w-full p-2 border rounded"></select>
-          <button onclick="giveLoan()" class="bg-yellow-500 text-white w-full mt-2 py-2 rounded">Loan ₹200</button>
+          <button id="loanBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 mt-2 rounded w-full">Loan ₹200</button>
         </div>
         <div>
           <label>Check Balance:</label>
           <select id="balancePlayer" class="w-full p-2 border rounded"></select>
-          <button onclick="checkBalance()" class="bg-blue-500 text-white w-full mt-2 py-2 rounded">Check</button>
+          <button id="checkBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 mt-2 rounded w-full">Check</button>
           <div id="balanceResult" class="mt-2 font-semibold"></div>
         </div>
       </div>
@@ -70,14 +69,14 @@
   </div>
 
   <script>
-    // ✅ Firebase Init
     const firebaseConfig = {
       apiKey: "AIzaSyBAfn9_W_ty4JNXxEgViu_1kqUQ4GM4g5M",
       authDomain: "indian-monopoly-3bb93.firebaseapp.com",
       projectId: "indian-monopoly-3bb93",
       storageBucket: "indian-monopoly-3bb93.appspot.com",
       messagingSenderId: "211270829889",
-      appId: "1:211270829889:web:3717c913c4a3cb0ebe83c0"
+      appId: "1:211270829889:web:3717c913c4a3cb0ebe83c0",
+      measurementId: "G-GCEQ2VBXDZ"
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
@@ -85,14 +84,14 @@
     async function addPlayer() {
       const name = document.getElementById('playerName').value.trim();
       const pin = document.getElementById('playerPin').value.trim();
-      if (!name || pin.length !== 4) return alert("Enter name & 4-digit PIN");
+      if (!name || !pin || pin.length !== 4) return alert('Enter name and 4-digit PIN');
       await db.collection("players").doc(name).set({ balance: 1500, pin });
       generateQR(name);
       document.getElementById('playerName').value = '';
       document.getElementById('playerPin').value = '';
     }
 
-    function generateQR(name) {
+    async function generateQR(name) {
       const qrDiv = document.createElement('div');
       qrDiv.className = 'p-2 border rounded text-center';
       qrDiv.innerHTML = `<strong>${name}</strong><br><canvas id="qr-${name}"></canvas>`;
@@ -102,12 +101,12 @@
     }
 
     async function updateDropdowns() {
-      const snap = await db.collection("players").get();
-      const names = snap.docs.map(doc => doc.id);
-      const ids = ['fromPlayer', 'toPlayer', 'loanPlayer', 'balancePlayer'];
-      ids.forEach(id => {
+      const playersSnap = await db.collection("players").get();
+      const names = playersSnap.docs.map(doc => doc.id);
+      const selects = ['fromPlayer', 'toPlayer', 'loanPlayer', 'balancePlayer'];
+      selects.forEach(id => {
         const sel = document.getElementById(id);
-        sel.innerHTML = names.map(name => `<option>${name}</option>`).join('');
+        sel.innerHTML = names.map(name => `<option value="${name}">${name}</option>`).join('');
       });
     }
 
@@ -116,18 +115,22 @@
       const to = document.getElementById('toPlayer').value;
       const amt = parseInt(document.getElementById('amount').value);
       const pin = document.getElementById('fromPin').value;
-      if (!from || !to || !amt || pin.length !== 4 || from === to) return alert("Invalid input");
+      if (!from || !to || !amt || from === to || pin.length !== 4) return alert("Invalid input");
 
       const fromRef = db.collection("players").doc(from);
       const toRef = db.collection("players").doc(to);
       const fromDoc = await fromRef.get();
       const toDoc = await toRef.get();
+
       if (!fromDoc.exists || !toDoc.exists) return alert("Player not found");
-      if (fromDoc.data().pin !== pin) return alert("Wrong PIN");
-      if (fromDoc.data().balance < amt) return alert("Insufficient Balance");
+      if (fromDoc.data().pin !== pin) return alert("Incorrect PIN");
+      if (fromDoc.data().balance < amt) return alert("Insufficient balance");
 
       await fromRef.update({ balance: fromDoc.data().balance - amt });
       await toRef.update({ balance: toDoc.data().balance + amt });
+
+      await db.collection("players").doc(from).collection("transactions").add({ to, amt, type: "sent", time: Date.now() });
+      await db.collection("players").doc(to).collection("transactions").add({ from, amt, type: "received", time: Date.now() });
 
       alert(`₹${amt} transferred from ${from} to ${to}`);
     }
@@ -138,21 +141,29 @@
       const doc = await ref.get();
       if (!doc.exists) return alert("Player not found");
       await ref.update({ balance: doc.data().balance + 200 });
-      alert(`${name} received ₹200 loan`);
+      await db.collection("players").doc(name).collection("transactions").add({ amt: 200, type: "loan", time: Date.now() });
+      alert(`${name} got a ₹200 loan`);
     }
 
     async function checkBalance() {
       const name = document.getElementById('balancePlayer').value;
-      const doc = await db.collection("players").doc(name).get();
+      const ref = db.collection("players").doc(name);
+      const doc = await ref.get();
       if (!doc.exists) return alert("Player not found");
-      document.getElementById('balanceResult').innerText = `Balance: ₹${doc.data().balance}`;
+      document.getElementById('balanceResult').innerText = `₹${doc.data().balance}`;
     }
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark');
     }
 
-    window.onload = updateDropdowns;
+    window.onload = function () {
+      updateDropdowns();
+      document.getElementById('addPlayerBtn').onclick = addPlayer;
+      document.getElementById('transferBtn').onclick = transferMoney;
+      document.getElementById('loanBtn').onclick = giveLoan;
+      document.getElementById('checkBtn').onclick = checkBalance;
+    };
   </script>
 </body>
 </html>
