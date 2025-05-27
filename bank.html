@@ -1,0 +1,74 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Indian Monopoly ATM System</title>
+  <script src="qrcode.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-900 dark:text-white">
+  <div class="max-w-4xl mx-auto p-4">
+    <div class="flex justify-between items-center mb-4">
+      <h1 class="text-3xl font-bold text-center">🏦 Indian Monopoly ATM System</h1>
+      <button onclick="toggleDarkMode()" class="bg-gray-300 dark:bg-gray-700 px-4 py-2 rounded">🌓</button>
+    </div>
+
+    <!-- Player Setup -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded p-4 mb-6">
+      <h2 class="text-xl font-semibold mb-2">🎮 Setup Players (2-6)</h2>
+      <div class="flex flex-wrap gap-2 mb-2">
+        <input type="text" id="playerName" placeholder="Player Name" class="p-2 border rounded w-40">
+        <input type="password" id="playerPin" placeholder="4-digit PIN" maxlength="4" class="p-2 border rounded w-32">
+        <button onclick="addPlayer()" class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">Add Player</button>
+      </div>
+      <div id="playersList" class="grid grid-cols-2 gap-4"></div>
+    </div>
+
+    <!-- Banker Panel -->
+    <div class="bg-white dark:bg-gray-800 shadow rounded p-4">
+      <h2 class="text-xl font-semibold mb-4">💰 Banker Controls</h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div>
+          <label>From:</label>
+          <select id="fromPlayer" class="w-full p-2 border rounded"></select>
+        </div>
+        <div>
+          <label>To:</label>
+          <select id="toPlayer" class="w-full p-2 border rounded"></select>
+        </div>
+        <div>
+          <label>Amount:</label>
+          <input type="number" id="amount" class="w-full p-2 border rounded">
+        </div>
+        <div>
+          <label>PIN:</label>
+          <input type="password" id="fromPin" maxlength="4" class="w-full p-2 border rounded">
+        </div>
+        <div class="md:col-span-2">
+          <button onclick="transferMoney()" class="bg-green-600 hover:bg-green-700 text-white px-4 py-2 w-full rounded">Transfer</button>
+        </div>
+      </div>
+
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div>
+          <label>Give ₹200 Loan to:</label>
+          <select id="loanPlayer" class="w-full p-2 border rounded"></select>
+          <button onclick="giveLoan()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 mt-2 rounded w-full">Loan ₹200</button>
+        </div>
+        <div>
+          <label>Check Balance:</label>
+          <select id="balancePlayer" class="w-full p-2 border rounded"></select>
+          <button onclick="checkBalance()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 mt-2 rounded w-full">Check</button>
+          <div id="balanceResult" class="mt-2 font-semibold"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
