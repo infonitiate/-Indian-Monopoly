@@ -54,10 +54,11 @@
 
       <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
         <div>
-          <label>Give ₹200 Loan to:</label>
-          <select id="loanPlayer" class="w-full p-2 border rounded"></select>
-          <button id="loanBtn" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 mt-2 rounded w-full">Loan ₹200</button>
-        </div>
+          <label>Give Loan to:</label>
+          <select id="loanPlayer" class="w-full p-2 border rounded mb-2"></select>
+          <input type="number" id="loanAmount" placeholder="Enter loan amount" class="w-full p-2 border rounded mb-2" />
+          <button onclick="giveLoan()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">Give Loan</button>
+          </div>
         <div>
           <label>Check Balance:</label>
           <select id="balancePlayer" class="w-full p-2 border rounded"></select>
@@ -134,18 +135,29 @@
 
       alert(`₹${amt} transferred from ${from} to ${to}`);
     }
-
     async function giveLoan() {
-      const name = document.getElementById('loanPlayer').value;
-      const ref = db.collection("players").doc(name);
-      const doc = await ref.get();
-      if (!doc.exists) return alert("Player not found");
-      await ref.update({ balance: doc.data().balance + 200 });
-      await db.collection("players").doc(name).collection("transactions").add({ amt: 200, type: "loan", time: Date.now() });
-      alert(`${name} got a ₹200 loan`);
-    }
+  const name = document.getElementById('loanPlayer').value;
+  const amount = parseInt(document.getElementById('loanAmount').value);
 
-    async function checkBalance() {
+  if (!name || !amount || amount <= 0) return alert("Enter valid player and amount");
+
+  const ref = db.collection("players").doc(name);
+  const doc = await ref.get();
+  if (!doc.exists) return alert("Player not found");
+
+  await ref.update({ balance: doc.data().balance + amount });
+
+  await db.collection("players").doc(name).collection("transactions").add({
+    from: "BANK",
+    amt: amount,
+    type: "loan",
+    time: Date.now()
+  });
+
+  alert(`${name} got a ₹${amount} loan`);
+  document.getElementById('loanAmount').value = "";
+}
+async function checkBalance() {
       const name = document.getElementById('balancePlayer').value;
       const ref = db.collection("players").doc(name);
       const doc = await ref.get();
