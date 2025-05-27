@@ -52,20 +52,22 @@
         </div>
       </div>
 
-      <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Loan Panel -->
         <div>
           <label>Give Loan to:</label>
           <select id="loanPlayer" class="w-full p-2 border rounded mb-2"></select>
           <input type="number" id="loanAmount" placeholder="Enter loan amount" class="w-full p-2 border rounded mb-2" />
           <button onclick="giveLoan()" class="bg-yellow-500 hover:bg-yellow-600 text-white px-4 py-2 rounded w-full">Give Loan</button>
-          </div>
-        <div>
-          <label>Check Balance:</label>
-          <select id="balancePlayer" class="w-full p-2 border rounded"></select>
-          <button id="checkBtn" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 mt-2 rounded w-full">Check</button>
-          <div id="balanceResult" class="mt-2 font-semibold"></div>
         </div>
-      </div>
+      
+        <!-- All Balances Panel -->
+        <div>
+          <label class="font-semibold">💼 All Balances:</label>
+          <div id="allBalances" class="bg-gray-100 dark:bg-gray-700 p-3 rounded mt-2 max-h-48 overflow-y-auto text-sm"></div>
+          <button onclick="displayAllBalances()" class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 mt-2 rounded w-full">🔄 Refresh Balances</button>
+        </div>
+      </div>      
     </div>
   </div>
 
