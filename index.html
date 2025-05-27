@@ -159,13 +159,19 @@
   alert(`${name} got a ₹${amount} loan`);
   document.getElementById('loanAmount').value = "";
 }
-async function checkBalance() {
-      const name = document.getElementById('balancePlayer').value;
-      const ref = db.collection("players").doc(name);
-      const doc = await ref.get();
-      if (!doc.exists) return alert("Player not found");
-      document.getElementById('balanceResult').innerText = `₹${doc.data().balance}`;
-    }
+async function displayAllBalances() {
+  const playersSnap = await db.collection("players").get();
+  let html = "";
+  playersSnap.forEach(doc => {
+    const name = doc.id;
+    const data = doc.data();
+    html += `<div class="flex justify-between border-b py-1">
+               <span>${name}</span>
+               <span>₹${data.balance}</span>
+             </div>`;
+  });
+  document.getElementById('allBalances').innerHTML = html;
+}
 
     function toggleDarkMode() {
       document.body.classList.toggle('dark');
